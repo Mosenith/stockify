@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Dtos.Comment;
 using api.Interfaces;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,13 @@ namespace api.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
-        private readonly ApplicationDBContext _context;
         private readonly ICommentRepository _commentRepo;
-        public CommentController(ApplicationDBContext context, ICommentRepository commentRepo)
+        private readonly IStockRepository _stockRepo;
+
+        public CommentController(ICommentRepository commentRepo, IStockRepository stockRepository)
         {
-            _context = context;
             _commentRepo = commentRepo;
+            _stockRepo = stockRepository;
         }
 
         [HttpGet]
@@ -38,6 +40,31 @@ namespace api.Controllers
                 return NotFound();
             }
             return Ok(comment.ToCommentDto());
+        }
+
+        [HttpPost("{stockId}")]
+        public async Task<IActionResult> Create([FromRoute] int stockId, CreateCommentDto commentDto)
+        {
+            if (!await _stockRepo.StockExists(stockId))
+            {
+                return BadRequest("Stock Does Not Exist");
+            }
+
+            var commentModel = commentDto.ToCommentFromCreate(stockId);
+            await _commentRepo.CreateAsync(commentModel);
+            return CreatedAtAction(nameof(GetById), new { id = commentModel.Id }, commentModel.ToCommentDto());
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CommentRequest updatedComment)
+        {
+            var commentModel = await _commentRepo.UpdateAsync(id, updatedComment.ToCommentFromCommentRequest());
+            if (commentModel == null)
+            {
+                return NotFound();
+            }
+            return Ok(commentModel.ToCommentDto());
         }
     }
 }

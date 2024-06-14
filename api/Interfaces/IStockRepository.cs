@@ -14,5 +14,6 @@ namespace api.Interfaces
         Task<Stock> CreateStockAsync(Stock stockModel);
         Task<Stock?> UpdateStockAsync(int id, Stock stockModel);
         Task<Stock?> DeleteStockByIdAsync(int id);
+        Task<bool> StockExists(int id);
     }
 }

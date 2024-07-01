@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using api.Data;
 using api.Dtos.Comment;
 using api.Interfaces;
 using api.Mappers;
@@ -65,6 +60,18 @@ namespace api.Controllers
                 return NotFound();
             }
             return Ok(commentModel.ToCommentDto());
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var commentModel = await _commentRepo.DeleteCommentByIdAsync(id);
+            if (commentModel == null)
+            {
+                return NotFound();
+            }
+            return Ok(commentModel);
         }
     }
 }

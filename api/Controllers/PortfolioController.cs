@@ -57,7 +57,7 @@ namespace api.Controllers
 
             await _portfolioRepository.CreateAsync(portfolioModel);
 
-            if(portfolioModel == null)
+            if (portfolioModel == null)
             {
                 return StatusCode(500, "An error occurred while creating the portfolio.");
             }
@@ -65,6 +65,21 @@ namespace api.Controllers
             return Created();
         }
 
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeletePortfolio(string symbol)
+        {
+            var username = User.GetUsername();
+            var appUser = await _userManager.FindByNameAsync(username);
+            var userPortfolio = await _portfolioRepository.GetUserPortfolio(appUser);
+            var filterPortfolio = userPortfolio.Where(s => s.Symbol.ToLower() == symbol.ToLower()).ToList();
 
+            if (!filterPortfolio.Any())
+                return NotFound($"Stock with symbol '{symbol}' not found in your portfolio.");  
+
+            await _portfolioRepository.DeletePortfolio(appUser, symbol);
+
+            return Ok();
+        }
     }
 }

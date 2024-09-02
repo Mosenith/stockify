@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace api.Dtos.Comment
 {
@@ -18,6 +14,7 @@ namespace api.Dtos.Comment
         [MaxLength(280, ErrorMessage = "Content must be less than 280 characters long")]
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedOn { get; set; } = DateTime.Now;
+        public string CreatedBy { get; set; } = string.Empty;
         public int? StockId { get; set; }
     }
 }

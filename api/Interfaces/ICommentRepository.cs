@@ -1,3 +1,4 @@
+using api.Helpers;
 using api.Models;
 
 namespace api.Interfaces
@@ -6,7 +7,7 @@ namespace api.Interfaces
     {
         Task<Comment> CreateAsync(Comment commentModel);
         Task<Comment?> DeleteCommentByIdAsync(int id);
-        Task<List<Comment>> GetAllCommentsAsync();
+        Task<List<Comment>> GetAllCommentsAsync(CommentQueryObject queryObject);
         Task<Comment?> GetByIdAsync(int id);
         Task<Comment?> UpdateAsync(int id, Comment commentModel);
     }
